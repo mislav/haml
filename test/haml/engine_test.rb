@@ -17,6 +17,10 @@ class EngineTest < Test::Unit::TestCase
     Haml::Engine.new(text, options).to_html(scope, locals, &block)
   end
 
+  def render_without_whitespace(*attrs, &block)
+    render(*attrs, &block).gsub(/\n */, '')
+  end
+
   def test_empty_render_should_remain_empty
     assert_equal('', render(''))
   end
@@ -459,5 +463,27 @@ class EngineTest < Test::Unit::TestCase
   # HTML5
   def test_html5_doctype
     assert_equal %{<!DOCTYPE html>\n}, render('!!!', :format => :html5)
+  end
+
+  # smart implicit tag tests
+  
+  def test_allowed_nesting_settings
+    nesting = Haml::Engine::ALLOWED_NESTING
+    
+    assert_equal 'div',  nesting['foo']
+    assert_equal 'div',  nesting['div']
+    assert_equal 'span', nesting['p']
+    assert_equal 'li',   nesting['ol']
+    assert_equal 'tr',   nesting['thead']
+    assert_equal 'td',   nesting['tr']
+    assert_equal 'dd',   nesting['dl']
+  end
+
+  def test_smart_implicit_tag_with_id
+    assert_equal %{<p><span id='a' /></p>}, render_without_whitespace("%p\n  #a/")
+  end
+  
+  def test_smart_implicit_tag_with_class
+    assert_equal %{<tr><td class='a' /></tr>}, render_without_whitespace("%tr\n  .a/")
   end
 end

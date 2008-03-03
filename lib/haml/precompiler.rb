@@ -87,6 +87,21 @@ module Haml
     # The Regex that matches a literal string or symbol value
     LITERAL_VALUE_REGEX = /^\s*(:(\w*)|(('|")([^\\\#'"]*?)\4))\s*$/
 
+    ALLOWED_NESTING = {
+      'tr' => %w(table thead tbody tfoot),
+      'td' => 'tr',
+      'li' => %w(ul ol),
+      'col' => 'colgroup',
+      'dd' => 'dl',
+      'option' => 'select',
+      'span' => %w(p h1 h2 h3 h4 h5 h6 tt i b big small em strong dfn code samp kbd
+        var cite abbr acronym sub sup q span bdo a dt pre caption legend address)
+    }.inject(Hash.new('div')) do |h, pair|
+      el = pair.first
+      Array(pair.last).each { |parent| h[parent] = el }
+      h
+    end
+
     private
 
     # Returns the precompiled string with the preamble and postamble
