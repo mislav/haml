@@ -6,10 +6,10 @@ module Haml
     ELEMENT         = ?%
 
     # Designates a <tt><div></tt> element with the given class.
-    DIV_CLASS       = ?.
+    ELEMENT_CLASS   = ?.
 
     # Designates a <tt><div></tt> element with the given id.
-    DIV_ID          = ?#
+    ELEMENT_ID      = ?#
 
     # Designates an XHTML/XML comment.
     COMMENT         = ?/
@@ -42,8 +42,8 @@ module Haml
     # specially-interpreted line.
     SPECIAL_CHARACTERS   = [
       ELEMENT,
-      DIV_CLASS,
-      DIV_ID,
+      ELEMENT_CLASS,
+      ELEMENT_ID,
       COMMENT,
       DOCTYPE,
       SCRIPT,
@@ -209,7 +209,7 @@ END
       @index = index + 1
 
       case text[0]
-      when DIV_CLASS, DIV_ID; render_div(text)
+      when ELEMENT_CLASS, ELEMENT_ID; render_implicit_tag(text)
       when ELEMENT; render_tag(text)
       when COMMENT; render_comment(text)
       when SCRIPT
@@ -585,9 +585,9 @@ END
       end
     end
 
-    # Renders a line that creates an XHTML tag and has an implicit div because of
+    # Renders a line that creates an implicit tag because of
     # <tt>.</tt> or <tt>#</tt>.
-    def render_div(line)
+    def render_implicit_tag(line)
       parent_tag = nil
       
       @to_close_stack.reverse_each do |pair|
