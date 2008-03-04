@@ -588,7 +588,17 @@ END
     # Renders a line that creates an XHTML tag and has an implicit div because of
     # <tt>.</tt> or <tt>#</tt>.
     def render_div(line)
-      render_tag('%div' + line)
+      parent_tag = nil
+      
+      @to_close_stack.reverse_each do |pair|
+        if pair.first == :element
+          parent_tag = pair.last
+          break
+        end
+      end
+      
+      tag_name = ALLOWED_NESTING[parent_tag]
+      render_tag('%' + tag_name + line)
     end
 
     # Renders an XHTML comment.
