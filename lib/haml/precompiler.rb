@@ -87,6 +87,11 @@ module Haml
     # The Regex that matches a literal string or symbol value
     LITERAL_VALUE_REGEX = /^\s*(:(\w*)|(('|")([^\\\#'"]*?)\4))\s*$/
 
+    # A Hash that represents mappings of parent element to its preferred
+    # implicit child. Usually it's a DIV, but in contexts where it is not
+    # allowed it can be something else, like SPAN in P or TD in TR.
+    #
+    #   ALLOWED_NESTING['select']  #-> 'option'
     ALLOWED_NESTING = {
       'tr' => %w(table thead tbody tfoot),
       'td' => 'tr',
