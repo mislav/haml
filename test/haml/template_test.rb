@@ -35,7 +35,7 @@ class TemplateTest < Test::Unit::TestCase
       @base.finder.append_view_path(TEMPLATE_PATH)
     end
     
-    if @base.respond_to?(:evaluate_assigns)
+    if @base.private_methods.include?('evaluate_assigns')
       @base.send(:evaluate_assigns)
     else
       # Rails 2.2
